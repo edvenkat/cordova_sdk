@@ -170,6 +170,14 @@ If you are targeting Android 12 and above (API level 31), you need to add the `c
 </config>
 ```
 
+> **Important**: The Adjust SDK includes the `com.google.android.gms.AD_ID` permission by default in version 4.32.0 and above.
+
+You can remove the `com.google.android.gms.AD_ID` permission by adding a `remove` directive. Do this if need to make your app COPPA-compliant or if you do not target the Google Play Store.
+
+```xml
+<uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+```
+
 For more information, see [Google's `AdvertisingIdClient.Info` documentation](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid).
 
 ### <a id="android-gps"></a>Google Play Services
@@ -842,7 +850,7 @@ Upon receiving this information, Adjust will block the sharing of that specific 
 Call the following method to instruct the Adjust SDK to communicate the user's choice to share data or change data sharing, to the Adjust backend:
 
 ```js
-var adjustThirdPartySharing = new AdjustThirdPartySharing(false);
+var adjustThirdPartySharing = new AdjustThirdPartySharing(true);
 Adjust.trackThirdPartySharing(adjustThirdPartySharing);
 ```
 
@@ -870,17 +878,9 @@ Upon receiving this information, Adjust changes sharing the specific user's data
 
 ### <a id="sdk-signature"></a>SDK signature
 
-An account manager must activate the Adjust SDK signature. Contact Adjust support (support@adjust.com) if you are interested in using this feature.
+When you set up the SDK Signature, each SDK communication package is "signed". This lets Adjust’s servers easily detect and reject any install activity that is not legitimate.
 
-If the SDK signature has already been enabled on your account and you have access to App Secrets in your Adjust Dashboard, please use the method below to integrate the SDK signature into your app.
-
-An App Secret is set by passing all secret parameters (`secretId`, `info1`, `info2`, `info3`, `info4`) to `setAppSecret` method of `AdjustConfig` instance:
-
-```js
-var adjustConfig = new AdjustConfig(appToken, environment);
-adjustConfig.setAppSecret(secretId, info1, info2, info3, info4);
-Adjust.create(adjustConfig);
-```
+There are just a few steps involved in setting up the SDK Signature. Please contact your Technical Account Manager or support@adjust.com to get started.
 
 ### <a id="background-tracking"></a>Background tracking
 
@@ -1124,7 +1124,7 @@ By completing these steps, you have successfully added support for deep linking 
 
 While deferred deep linking is not supported out of the box on Android and iOS, our Adjust SDK makes it possible.
  
-In order to get info about the URL content in a deferred deep linking scenario, you should set a callback method on the `AdjustConfig` object which will receive one parameter where the content of the URL will be delivered. You should set this method on the config object by calling the method `setDeeplinkCallbackListener`:
+In order to get info about the URL content in a deferred deep linking scenario, you should set a callback method on the `AdjustConfig` object which will receive one parameter where the content of the URL will be delivered. You should set this method on the config object by calling the method `setDeferredDeeplinkCallbackListener`:
 
 ```js
 var adjustConfig = new AdjustConfig(appToken, environment);
@@ -1145,7 +1145,7 @@ var adjustConfig = new AdjustConfig(appToken, environment);
 adjustConfig.setShouldLaunchDeeplink(true);
 // or adjustConfig.setShouldLaunchDeeplink(false);
 
-adjustConfig.setDeeplinkCallbackListener(function(deeplink) {
+adjustConfig.setDeferredDeeplinkCallbackListener(function(deeplink) {
     console.log("Deferred deep link URL content: " + deeplink);
 });
 
